@@ -11,7 +11,7 @@ import streamlit as st
 from PIL import Image, ImageDraw
 
 
-WIDTH, HEIGHT = 720, 540
+WIDTH, HEIGHT = 640, 480  # smaller canvas so it fits mobile viewports better
 DEGRADE_PER_SEC = {"hunger": 4, "energy": 2, "fun": 3, "hygiene": 2}
 NAME = "터리"
 
@@ -64,8 +64,9 @@ def mood_score():
 def draw_hamster(state, mood, t):
     img = Image.new("RGB", (WIDTH, HEIGHT), (32, 36, 48))
     d = ImageDraw.Draw(img)
-    cx, cy = WIDTH // 2, HEIGHT // 2 + 40
-    bounce = math.sin(t * 3) * 4 if state != "sleep" else 0
+    # Move character higher on the canvas for mobile viewports
+    cx, cy = WIDTH // 2, HEIGHT // 2
+    bounce = math.sin(t * 3) * (3 if state != "sleep" else 0)
     cx += int(math.sin(t * 3) * (2 if state != "sleep" else 0))
     cy += int(bounce)
 
@@ -76,16 +77,16 @@ def draw_hamster(state, mood, t):
     outline = (90, 70, 50)
 
     if state == "bath":
-        d.ellipse((cx - 80, cy + 70, cx + 80, cy + 110), fill=(70, 120, 170))
+        d.ellipse((cx - 80, cy + 60, cx + 80, cy + 100), fill=(70, 120, 170))
     elif state == "sleep":
-        d.rounded_rectangle((cx - 90, cy + 55, cx + 90, cy + 105), 18, fill=(75, 90, 130))
-        d.rounded_rectangle((cx - 60, cy + 40, cx + 60, cy + 66), 12, fill=(190, 205, 230))
+        d.rounded_rectangle((cx - 90, cy + 45, cx + 90, cy + 95), 18, fill=(75, 90, 130))
+        d.rounded_rectangle((cx - 60, cy + 32, cx + 60, cy + 58), 12, fill=(190, 205, 230))
     elif state == "eat":
-        d.ellipse((cx - 60, cy + 72, cx + 60, cy + 102), fill=(120, 90, 60))
-        d.ellipse((cx - 55, cy + 70, cx + 55, cy + 96), fill=(180, 140, 90))
+        d.ellipse((cx - 60, cy + 62, cx + 60, cy + 92), fill=(120, 90, 60))
+        d.ellipse((cx - 55, cy + 60, cx + 55, cy + 86), fill=(180, 140, 90))
     elif state == "play":
-        ball_y = cy + 60 + int(math.sin(t * 8) * 12)
-        ball_x = cx + 80 + int(math.sin(t * 4) * 10)
+        ball_y = cy + 52 + int(math.sin(t * 8) * 10)
+        ball_x = cx + 76 + int(math.sin(t * 4) * 10)
         d.ellipse((ball_x - 16, ball_y - 16, ball_x + 16, ball_y + 16), fill=(250, 200, 90))
         d.line((ball_x - 6, ball_y - 6, ball_x + 6, ball_y + 6), fill=(200, 140, 60), width=3)
         d.line((ball_x - 6, ball_y + 6, ball_x + 6, ball_y - 6), fill=(200, 140, 60), width=3)
